@@ -1,0 +1,56 @@
+{
+  extends: [
+    'config:base',
+    ':automergeMinor'
+  ],
+  timezone: 'Asia/Jerusalem',
+  rebaseWhen: 'conflicted',
+  updateLockFiles: true,
+  prCreation: 'immediate',
+  rangeStrategy: 'auto',
+  prHourlyLimit: 5,
+  prConcurrentLimit: 5,
+  requiredStatusChecks: null, // bors will always be pending and this feature is only partially implemented so setting to not wait on pr status
+  automergeType: 'pr-comment',
+  automergeComment: 'bors r+',
+  labels: ['chore', 'renovate 🎨'],
+  npm: {
+    fileMatch: ['(^|/)package.json$', '(^|/)package.dist.json$']
+  },
+  packageRules: [
+    {
+      sourceUrlPrefixes: ['https://github.com/middyjs/middy'],
+      groupName: 'Middy monorepo packages'
+    },
+    {
+      packageNames: ['aws-appsync'],
+      allowedVersions: '4.0.1' // we don't trust them :\
+    },
+    {
+      paths: ['e2e/**'],
+      packageNames: ['webpack'],
+      allowedVersions: '4.*' // https://github.com/env0/env0/pull/2872#issuecomment-761878435
+    },
+    {
+      packageNames: ['@shiftcoders/dynamo-easy'],
+      allowedVersions: '6.0.0-pr91.1' // https://github.com/shiftcode/dynamo-easy/issues/331
+    },
+    {
+      packageNames: ['serverless-vpc-plugin'],
+      allowedVersions: '0.10.0' // breaking changes in https://github.com/smoketurner/serverless-vpc-plugin/releases/tag/v1.0.0
+    },
+    {
+      packageNames: ['antd', '@ant-design/icons', '@nivo/line', 'auth0-lock', 'react-datepicker'],
+      "automerge": false // always manually visually verify our ui library
+    },
+    {
+      "packageNames": ["@gitbeaker/node"],
+      "allowedVersions": "< 28.0.0 || > 28.0.1" // Random console print on those two versions https://github.com/jdalrymple/gitbeaker/pull/1413#discussion_r550482902, can be removed when 28.0.1 is not the latest version
+    },
+    {
+      "packageNames": ["hashicorp/terraform"],  // We don't want to update our TF version automatically
+      "enabled": false
+    }
+  ]
+}
+
